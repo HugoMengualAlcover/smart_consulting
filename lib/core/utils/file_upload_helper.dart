@@ -9,17 +9,7 @@ import 'package:document_scanner/document_scanner.dart';
 class FileManager {
   //File scannedDocument;
 
-  showModelSheetForImage(
-
-  /*DocumentScanner(
-    onDocumentScanned: (ScannedImage scImg){
-    print("document : " + scImg.croppedImage!);
-    scannedDocument = scImg.getScannedDocumentAsFile();
-    },
-  );*/
-
-      {int maxFileSize = 10 * 1024,
-      List<String> allowedExtensions = const ["jpg", "png", "jpeg"],
+  showModelSheetForImage({maxFileSize = 10 * 1024, List<String> allowedExtensions = const ["jpg", "png", "jpeg"],
       void Function(List<String?>)? getImages}) async {
     await Get.bottomSheet(
         SafeArea(

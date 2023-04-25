@@ -40,25 +40,26 @@ class DashboardScreen extends GetWidget<DashboardController> {
                               backgroundColor: ColorConstant.cyan600,
                               shape: RoundedRectangleBorder(
                                   borderRadius:
-                                      BorderRadiusStyle.circleBorder24),
+                                  BorderRadiusStyle.circleBorder24),
                             ),
                           )),
                       Container(
                           child: ElevatedButton.icon(
-                        onPressed: onTapCargarGastos,
-                        icon: Icon(
-                          Icons.camera_alt,
-                          color: ColorConstant.black800,
-                          size: 24.0,
-                        ),
-                        label: Text('lbl_cargar_gastos'.tr), // <-- Text
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(width, 48),
-                          backgroundColor: ColorConstant.cyan600,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadiusStyle.circleBorder24),
-                        ),
-                      )),
+                            onPressed: onTapCargarGastos,
+                            icon: Icon(
+                              Icons.camera_alt,
+                              color: ColorConstant.black800,
+                              size: 24.0,
+                            ),
+                            label: Text('lbl_cargar_gastos'.tr), // <-- Text
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: Size(width, 48),
+                              backgroundColor: ColorConstant.cyan600,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadiusStyle
+                                      .circleBorder24),
+                            ),
+                          )),
                     ]))));
   }
 
@@ -66,11 +67,64 @@ class DashboardScreen extends GetWidget<DashboardController> {
     Get.toNamed(AppRoutes.crearFacturaOneScreen);
   }
 
+  uploadImage(File scDoc) async {
+    bool isAllOk = await putExpense1(scDoc);
+    if (isAllOk){
+      Fluttertoast.showToast(
+          msg: "Imagen/imagenes enviada/s correctamente",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }else{
+      Fluttertoast.showToast(
+          msg: "Errror al guardar. Si ha subido varias imagenes puede que solo alguna se haya subido.",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      Fluttertoast.showToast(
+          msg: "Reintente.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  }
+
   onTapCargarGastos() async {
     await PermissionManager.askForPermission(Permission.camera);
     await PermissionManager.askForPermission(Permission.storage);
 
-    List<String?>? imageList = [];
+    File scannedDocument;
+
+    return DocumentScanner(
+      onDocumentScanned: (ScannedImage scImg) {
+        print("document : " + scImg.croppedImage!);
+        scannedDocument = scImg.getScannedDocumentAsFile();
+        uploadImage(scannedDocument);
+      },
+    );
+  }
+
+  Future<bool> putExpense1(File file) async {
+    bool isOk = false;
+
+    int a = await ApiClient().putExpense(file);
+    if (a == 1) isOk = true;
+    else isOk = false;
+
+    print(isOk);
+    return isOk;
+  }
+}
+   /* List<String?>? imageList = [];
     await FileManager().showModelSheetForImage(getImages: (value) async {
       imageList = value;
     });
@@ -104,9 +158,8 @@ class DashboardScreen extends GetWidget<DashboardController> {
          textColor: Colors.white,
          fontSize: 16.0);
    }
-  }
 
-  Future<bool> putExpense(List<String> files) async {
+   Future<bool> putExpense(List<String> files) async {
     bool isOk = false;
 
     if (files != []){
@@ -121,4 +174,5 @@ class DashboardScreen extends GetWidget<DashboardController> {
     print(isOk);
     return isOk;
   }
-}
+
+  }*/
